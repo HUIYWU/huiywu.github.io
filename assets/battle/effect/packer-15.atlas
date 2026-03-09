@@ -1,0 +1,76 @@
+
+packer-15.png
+size: 250,98
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+animation12026
+  rotate: false
+  xy: 0, 0
+  size: 50, 49
+  orig: 50, 49
+  offset: 0, 0
+  index: 1
+animation12026
+  rotate: false
+  xy: 50, 0
+  size: 50, 49
+  orig: 50, 49
+  offset: 0, 0
+  index: 2
+animation12026
+  rotate: false
+  xy: 100, 0
+  size: 50, 49
+  orig: 50, 49
+  offset: 0, 0
+  index: 3
+animation12026
+  rotate: false
+  xy: 150, 0
+  size: 50, 49
+  orig: 50, 49
+  offset: 0, 0
+  index: 4
+animation12026
+  rotate: false
+  xy: 200, 0
+  size: 50, 49
+  orig: 50, 49
+  offset: 0, 0
+  index: 5
+animation12026
+  rotate: false
+  xy: 0, 49
+  size: 50, 49
+  orig: 50, 49
+  offset: 0, 0
+  index: 6
+animation12026
+  rotate: false
+  xy: 50, 49
+  size: 50, 49
+  orig: 50, 49
+  offset: 0, 0
+  index: 7
+animation12026
+  rotate: false
+  xy: 100, 49
+  size: 50, 49
+  orig: 50, 49
+  offset: 0, 0
+  index: 8
+animation12026
+  rotate: false
+  xy: 150, 49
+  size: 50, 49
+  orig: 50, 49
+  offset: 0, 0
+  index: 9
+animation12026
+  rotate: false
+  xy: 200, 49
+  size: 50, 49
+  orig: 50, 49
+  offset: 0, 0
+  index: 10

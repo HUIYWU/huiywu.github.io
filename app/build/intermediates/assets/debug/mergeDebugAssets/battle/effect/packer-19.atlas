@@ -1,0 +1,55 @@
+
+packer-19.png
+size: 735,125
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+animation12079
+  rotate: false
+  xy: 0, 0
+  size: 105, 125
+  orig: 105, 125
+  offset: 0, 0
+  index: 1
+animation12079
+  rotate: false
+  xy: 105, 0
+  size: 105, 125
+  orig: 105, 125
+  offset: 0, 0
+  index: 2
+animation12079
+  rotate: false
+  xy: 210, 0
+  size: 105, 125
+  orig: 105, 125
+  offset: 0, 0
+  index: 3
+animation12079
+  rotate: false
+  xy: 315, 0
+  size: 105, 125
+  orig: 105, 125
+  offset: 0, 0
+  index: 4
+animation12079
+  rotate: false
+  xy: 420, 0
+  size: 105, 125
+  orig: 105, 125
+  offset: 0, 0
+  index: 5
+animation12079
+  rotate: false
+  xy: 525, 0
+  size: 105, 125
+  orig: 105, 125
+  offset: 0, 0
+  index: 6
+animation12079
+  rotate: false
+  xy: 630, 0
+  size: 105, 125
+  orig: 105, 125
+  offset: 0, 0
+  index: 7

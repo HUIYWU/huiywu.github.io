@@ -1,0 +1,109 @@
+{
+	"characters": {
+		"villager": {
+			"name": null, 
+			"avatar": null
+		}, 
+		"zhan_tingyun": {
+		    "name": "战 廷云",
+		    "avatar": ["face11007", "face11008", "face11009", "face11010", "face11011"]
+		}, 
+		"xin_er": {
+		    "name": "歆 儿",
+		    "avatar": ["face11012", "face11013", "face11014", "face11018"]
+		}
+	},
+	"dialogues": {
+	    "villager_dialogue_1": {
+    		"character": "villager", 
+    		"avatarIndex": 0, 
+    		"layoutType": "simple", 
+    		"text": "村民：知道我族的传说吗？", 
+    		"next": "option", 
+    		"options": [{
+    		    "next": "zhan_tingyun_response_1"
+    		    }, {
+    		    "next": "villager_dialogue_1.2"
+    		    }
+		    ]
+		}, 
+		"zhan_tingyun_response_1": {
+		    "character": "zhan_tingyun", 
+		    "avatarIndex": 0, 
+		    "layoutType": "full", 
+		    "text": "嗯！知道！", 
+		    "next": "villager_dialogue_1.1"
+		}, 
+		 "villager_dialogue_1.1": {
+    		"character": "villager", 
+    		"avatarIndex": 0, 
+    		"layoutType": "simple", 
+    		"text": "村民：哈哈，那就好，要谨记我族的使命哦。",
+    		"next": "end"
+		}, 
+		 "villager_dialogue_1.2": {
+    		"character": "villager", 
+    		"avatarIndex": 0, 
+    		"layoutType": "simple", 
+    		"text": "[BLACK]村民：相传我族是[RED]女娲[BLACK]的直系子孙，[RED]女娲[BLACK]升天之后，我族奉命世代由祭司血统的人担任「继承者」，让身体成为[RED]三皇玺之钥[BLACK]的容器，并指派「守护者」来保护继承者。", 
+    		"next": "zhan_tingyun_response_1.1"
+		}, 
+		"zhan_tingyun_response_1.1": {
+		    "character": "zhan_tingyun", 
+		    "avatarIndex": 3, 
+		    "layoutType": "full", 
+		    "text": "喔...这样啊。", 
+		    "next": "end"
+		}, 
+		"villager_dialogue_2": {
+    		"character": "villager", 
+    		"avatarIndex": 0, 
+    		"layoutType": "simple", 
+    		"text": "村民：上一任的「继承者」苍祀婆婆，把继承者的责任交给风翎后，就成了村子里的占卜师了，婆婆的占卜一向很神准呢。", 
+    		"next": "end"
+		}, 
+		"villager_dialogue_2": {
+    		"character": "villager", 
+    		"avatarIndex": 0, 
+    		"layoutType": "simple", 
+    		"text": "村民：上一任的「继承者」苍祀婆婆，把继承者的责任交给风翎后，就成了村子里的占卜师了，婆婆的占卜一向很神准呢。", 
+    		"next": "end"
+		}, 
+		"villager_dialogue_3": {
+    		"character": "villager", 
+    		"avatarIndex": 0, 
+    		"layoutType": "simple", 
+    		"text": "[BLACK]村民：我听我爹讲，古老的传说中，[RED]三皇玺[BLACK]蕴含着惊人的力量，长久以来，各方神魔、部族都希望能得到它，我族守护的[RED]三皇玺之钥[BLACK]听说是寻得[RED]三皇玺[BLACK]的关键呢。", 
+    		"next": "zhan_tingyun_response_2"
+		}, 
+		"zhan_tingyun_response_2": {
+		    "character": "zhan_tingyun", 
+		    "avatarIndex": 3, 
+		    "layoutType": "full", 
+		    "text": "喔～你懂的真多啊。", 
+		    "next": "end"
+		}, 
+		"villager_dialogue_4": {
+    		"character": "villager", 
+    		"avatarIndex": 0, 
+    		"layoutType": "simple", 
+    		"text": "[BLACK]村民：我们村子隐居於此已有上千年了，这些年来从来没被人发现，最主要是因为村口的[RED]女娲石碎片[BLACK]所产生的结界，使外界无法看到我们的村子，所以我们才得以安居於此那么长久的时间。", 
+    		"next": "end"
+		}, 
+		"villager_dialogue_5": {
+    		"character": "villager", 
+    		"avatarIndex": 0, 
+    		"layoutType": "simple", 
+    		"text": "[BLACK]村民：[RED]女娲石[BLACK]的圣光愈来愈暗淡了，感觉有点担心...", 
+    		"next": "end"
+		}, 
+		"villager_dialogue_6": {
+    		"character": "villager", 
+    		"avatarIndex": 0, 
+    		"layoutType": "simple", 
+    		"text": "守卫：北边的吊桥不知什么时候断了，你们没事别在那边逗留，小心跌下去可没人拉得了你们。", 
+    		"next": "end"
+		}
+
+	}
+}

@@ -1,0 +1,62 @@
+
+packer-0.png
+size: 404,152
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+animation07003
+  rotate: false
+  xy: 0, 0
+  size: 101, 76
+  orig: 101, 76
+  offset: 0, 0
+  index: 1
+animation07003
+  rotate: false
+  xy: 101, 0
+  size: 101, 76
+  orig: 101, 76
+  offset: 0, 0
+  index: 2
+animation07003
+  rotate: false
+  xy: 202, 0
+  size: 101, 76
+  orig: 101, 76
+  offset: 0, 0
+  index: 3
+animation07003
+  rotate: false
+  xy: 303, 0
+  size: 101, 76
+  orig: 101, 76
+  offset: 0, 0
+  index: 4
+animation07003
+  rotate: false
+  xy: 0, 76
+  size: 101, 76
+  orig: 101, 76
+  offset: 0, 0
+  index: 5
+animation07003
+  rotate: false
+  xy: 101, 76
+  size: 101, 76
+  orig: 101, 76
+  offset: 0, 0
+  index: 6
+animation07003
+  rotate: false
+  xy: 202, 76
+  size: 101, 76
+  orig: 101, 76
+  offset: 0, 0
+  index: 7
+animation07003
+  rotate: false
+  xy: 303, 76
+  size: 101, 76
+  orig: 101, 76
+  offset: 0, 0
+  index: 8

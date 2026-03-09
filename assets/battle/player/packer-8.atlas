@@ -1,0 +1,118 @@
+
+packer-8.png
+size: 228,236
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+0_await
+  rotate: false
+  xy: 0, 0
+  size: 57, 59
+  orig: 57, 59
+  offset: 0, 0
+  index: 1
+0_await
+  rotate: false
+  xy: 57, 0
+  size: 57, 59
+  orig: 57, 59
+  offset: 0, 0
+  index: 2
+0_await
+  rotate: false
+  xy: 114, 0
+  size: 57, 59
+  orig: 57, 59
+  offset: 0, 0
+  index: 3
+0_await
+  rotate: false
+  xy: 171, 0
+  size: 57, 59
+  orig: 57, 59
+  offset: 0, 0
+  index: 4
+1_attack
+  rotate: false
+  xy: 0, 59
+  size: 57, 59
+  orig: 57, 59
+  offset: 0, 0
+  index: 1
+1_attack
+  rotate: false
+  xy: 57, 59
+  size: 57, 59
+  orig: 57, 59
+  offset: 0, 0
+  index: 2
+1_attack
+  rotate: false
+  xy: 114, 59
+  size: 57, 59
+  orig: 57, 59
+  offset: 0, 0
+  index: 3
+1_attack
+  rotate: false
+  xy: 171, 59
+  size: 57, 59
+  orig: 57, 59
+  offset: 0, 0
+  index: 4
+1_attack
+  rotate: false
+  xy: 0, 118
+  size: 57, 59
+  orig: 57, 59
+  offset: 0, 0
+  index: 5
+2_skill
+  rotate: false
+  xy: 57, 118
+  size: 57, 59
+  orig: 57, 59
+  offset: 0, 0
+  index: 1
+2_skill
+  rotate: false
+  xy: 114, 118
+  size: 57, 59
+  orig: 57, 59
+  offset: 0, 0
+  index: 2
+3_defend
+  rotate: false
+  xy: 171, 118
+  size: 57, 59
+  orig: 57, 59
+  offset: 0, 0
+  index: -1
+4_weak
+  rotate: false
+  xy: 0, 177
+  size: 57, 59
+  orig: 57, 59
+  offset: 0, 0
+  index: 1
+4_weak
+  rotate: false
+  xy: 57, 177
+  size: 57, 59
+  orig: 57, 59
+  offset: 0, 0
+  index: 2
+5_defeated
+  rotate: false
+  xy: 114, 177
+  size: 57, 59
+  orig: 57, 59
+  offset: 0, 0
+  index: -1
+6_won
+  rotate: false
+  xy: 171, 177
+  size: 57, 59
+  orig: 57, 59
+  offset: 0, 0
+  index: -1

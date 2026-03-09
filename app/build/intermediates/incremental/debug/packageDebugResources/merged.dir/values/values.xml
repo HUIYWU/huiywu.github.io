@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">苍神录</string>
+    <style name="GdxTheme" parent="android:Theme">
+	    <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+</resources>

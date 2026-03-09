@@ -1,0 +1,55 @@
+
+face1001002.png
+size: 216,58
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+0_await
+  rotate: false
+  xy: 0, 0
+  size: 54, 29
+  orig: 54, 29
+  offset: 0, 0
+  index: 1
+0_await
+  rotate: false
+  xy: 54, 0
+  size: 54, 29
+  orig: 54, 29
+  offset: 0, 0
+  index: 2
+1_skill
+  rotate: false
+  xy: 108, 0
+  size: 54, 29
+  orig: 54, 29
+  offset: 0, 0
+  index: 1
+1_skill
+  rotate: false
+  xy: 162, 0
+  size: 54, 29
+  orig: 54, 29
+  offset: 0, 0
+  index: 2
+2_weak
+  rotate: false
+  xy: 0, 29
+  size: 54, 29
+  orig: 54, 29
+  offset: 0, 0
+  index: 1
+2_weak
+  rotate: false
+  xy: 54, 29
+  size: 54, 29
+  orig: 54, 29
+  offset: 0, 0
+  index: 2
+3_defeated
+  rotate: false
+  xy: 108, 29
+  size: 54, 29
+  orig: 54, 29
+  offset: 0, 0
+  index: -1
