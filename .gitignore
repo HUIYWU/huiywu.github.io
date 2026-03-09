@@ -1,2 +1,4 @@
 /build
+/app/build
+/core/build
 *.html
