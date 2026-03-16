@@ -22,15 +22,22 @@ public class EffectManager {
         this.battleScene = scene;
     }
     
+    //target用于发起特效结束事件
     public void postEffect(BattleActionConfig config, BaseEntity target, Array<BaseEntity> aims) {
     	String key = config.getEffectId();
         Animation<TextureRegion> animation = animationMap.get(key);
         for (BaseEntity aim : aims) {
+            float[] size = config.getSize();
+            float width = size[0];
+            float height = size[1];
             float x, y;
             if (config.isSpecialPosition()) {
                 float[] position = config.getPosition();
                 x = position[0];
                 y = position[1];
+                BattleScene.EffectActor effect_actor = battleScene.new EffectActor(target, animation, x, y, width, height);
+                effectGroup.addActor(effect_actor);
+                break;
             } else if (config.getSize()[0] >= aim.getWidth() * 1.8) {
                 x = aim.getX() - config.getSize()[0] * 0.2f;
                 y = aim.getY();
@@ -38,9 +45,7 @@ public class EffectManager {
                 x = aim.getX();
                 y = aim.getY();
             }
-            float[] size = config.getSize();
-            float width = size[0];
-            float height = size[1];
+            
             BattleScene.EffectActor effect_actor = battleScene.new EffectActor(target, animation, x, y, width, height);
             effectGroup.addActor(effect_actor);
         }

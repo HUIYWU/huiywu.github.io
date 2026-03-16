@@ -43,6 +43,8 @@ public class TurnManager {
         for (BaseEntity participant : participants) {
             participant.addListener(
                     new EventListener() {
+                        //防止多个结束事件同时发生;
+                        private boolean round = false;
                         @Override
                         public boolean handle(Event event) {
                             if (event.getTarget() != participant) {
@@ -50,14 +52,16 @@ public class TurnManager {
                             }
                             
                             if (event instanceof EffectFinishEvent) {
-                                //EffectFinishEvent finish_event = (EffectFinishEvent) event;
-                                scene.recoverLowerPart();
-                                scene.clearTwinText();
-                                scene.enableDialog(true);
-                                endTurn();
-                                
+                                if(round) {
+                                	scene.recoverLowerPart();
+                                    scene.clearTwinText();
+                                    scene.enableDialog(true);
+                                    endTurn();
+                                    round = false;
+                                }
                                 return true;
                             } else if (event instanceof EffectTriggerEvent) {
+                                round = true;
                                 scene.preprocess((TextButton)scene.getButtonTable().getChild(0));
                                 Timer.schedule(new Timer.Task() {
                                     @Override
@@ -68,8 +72,7 @@ public class TurnManager {
                                 EffectTriggerEvent trigger_event = (EffectTriggerEvent) event;
                                 BaseEntity target = trigger_event.getTarget(); // target是事件发起对象
                                 BattleActionConfig config = trigger_event.getActionConfig();
-                                Array<BaseEntity> aims =
-                                        actionManager.selectAim(target, config); // aim是选择的对象
+                                Array<BaseEntity> aims = actionManager.getAims(); // aim是选择的对象
                                 effectManager.postEffect(config, target, aims);
                                 if (config.isFlashFollow()) {
                                     Array<BaseEntity> target_1 = new Array<>();
@@ -143,7 +146,7 @@ public class TurnManager {
 
     private void excuteAIOperation() {
         BattleActionConfig config = BattleActionConfig.obtainConfigs(activeParticipant.getName())[0];
-        //
+        //...
     }
 
     public BaseEntity getActiveParticipant() {

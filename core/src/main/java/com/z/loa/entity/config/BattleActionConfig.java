@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.z.loa.Constants;
+import com.z.loa.data.ActionCarrier;
 import com.z.loa.data.ActionData;
 import com.z.loa.manager.FontManager;
 
@@ -75,11 +76,25 @@ public class BattleActionConfig {
         return configs;
     }
     
+    @Deprecated
     public static ActionData.Player getPlayerData(String name) {
     	return data.players.get(name);
     }
+    @Deprecated
+    public static ActionData.Enemy getEnemyData(String name) {
+    	return data.enemies.get(name);
+    }
     
-    //待删除
+    public static ActionCarrier getCarrierData(String id) {
+    	if(data.players.containsKey(id)) {
+    		return data.players.get(id);
+    	} else if (data.enemies.containsKey(id)){
+    		return data.enemies.get(id);
+    	}
+        return null;
+    }
+    
+    @Deprecated
     public static BattleActionConfig createAttackConfig() {
         BattleActionConfig config = new BattleActionConfig();
         config.setEffectId("animation07003");
@@ -95,7 +110,7 @@ public class BattleActionConfig {
         return config;
     }
     
-    //待删除
+    @Deprecated
     public static BattleActionConfig createQiongQiConfig() {
         BattleActionConfig config = new BattleActionConfig();
         config.setEffectId("animation07001");

@@ -1,20 +1,50 @@
 {
   "allFiles": [
     {
-      "file": "/storage/emulated/0/AndroidIDEProjects/MyGdxACS/.gitignore",
+      "file": "/storage/emulated/0/AndroidIDEProjects/MyGdxACS/build.gradle",
       "selection": {
         "end": {
-          "column": 11,
-          "index": 29,
-          "line": 2
+          "column": 0,
+          "index": 0,
+          "line": 0
         },
         "start": {
-          "column": 11,
-          "index": 29,
-          "line": 2
+          "column": 0,
+          "index": 0,
+          "line": 0
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/MyGdxACS/core/build.gradle",
+      "selection": {
+        "end": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        },
+        "start": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/MyGdxACS/plan.txt",
+      "selection": {
+        "end": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        },
+        "start": {
+          "column": 0,
+          "index": 0,
+          "line": 0
         }
       }
     }
   ],
-  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/MyGdxACS/.gitignore"
+  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/MyGdxACS/plan.txt"
 }

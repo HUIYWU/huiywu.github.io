@@ -45,12 +45,17 @@ public class BattleScene {
 	private ObjectMap<TextButton, BottomBar> barMap;
     private ObjectMap<BaseEntity, Table> playerSkillTableMap;
     private ObjectMap<BaseEntity, Image> avatarMap;
+    private ObjectMap<CheckBox, BaseEntity> checkEntityMap;
     
 	private Group characterGroup;
 	private Array<BaseEntity> characterArray;
     private Array<BaseEntity> playerArray;
 	private Group effectGroup;
+    //private Array<ButtonGroup<ImageTextButton>> skillGroupArray;
+    private ButtonGroup<CheckBox> playerCheckBoxGroup;
+    private ButtonGroup<CheckBox> enemyCheckBoxGroup;
 	private Dialog dialog;
+    private Dialog checkDialog;
 	private Label message;
 	private Label.LabelStyle messageStyle;
 
@@ -100,9 +105,9 @@ public class BattleScene {
 		effectAnimationMap.put("animation01003",new Animation<TextureRegion>(0.2f, atlas_1.findRegions("animation01003")));
 		effectAnimationMap.put("animation07002",new Animation<TextureRegion>(0.2f, atlas_2.findRegions("animation07002")));
 		effectAnimationMap.put("animation07003",new Animation<TextureRegion>(0.2f, atlas_3.findRegions("animation07003")));
-        String[] temp = {"01009", "12080", "12081", "12026", "12025", "12077", "12078", "12079", "09006", "12033", "05009"};
-        for(int i = 12; i <= 22; i ++) {
-        	TextureAtlas atlas_t = new TextureAtlas(Gdx.files.internal(String.format("battle/effect/packer-%d.atlas", i)));
+        String[] temp = {"01009", "12080", "12081", "12026", "12025", "12077", "12078", "12079", "09006", "12033", "05009", "08004"};
+        for (int i = 12; i <= 23; i++) {
+            TextureAtlas atlas_t =new TextureAtlas(Gdx.files.internal(String.format("battle/effect/packer-%d.atlas", i)));
             String region_name = "animation" + temp[i - 12];
             Animation<TextureRegion> animation = new Animation<TextureRegion>(0.2f, atlas_t.findRegions(region_name));
             effectAnimationMap.put(region_name, animation);
@@ -152,7 +157,7 @@ public class BattleScene {
 //        	Gdx.app.error("角色z索引", "" + b_e.getZIndex());
 //        }
 //        Gdx.app.error("effectZ索引", "" + effectGroup.getZIndex());
-        actionManager = new BattleActionManager(characterArray);
+        actionManager = new BattleActionManager(characterArray, this);
         effectManager = new EffectManager(effectGroup, effectAnimationMap, this);
         
     }
@@ -195,7 +200,7 @@ public class BattleScene {
         }
         turnManager = new TurnManager(characterArray, playerArray, this);
         turnManager.init(actionManager, effectManager);
-        
+        setCheckDialog();
     }
     
 
@@ -307,23 +312,22 @@ public class BattleScene {
 				showStateTable();
 				break;
 			case ATTACK :
+                checkDialog.show(battleStage);
                 BaseEntity entity = turnManager.getActiveParticipant();
                 BattleActionConfig config = BattleActionConfig.obtainConfigs(entity.getName())[0];
-                entity.setBattleState(BaseEntity.BattleState.ATTACK);
-                dialog.setVisible(false);
-				disableLowerPart();
-                entity.setActionConfig(config);
-//                BattleActionConfig config = BattleActionConfig.createAttackConfig();
-//				BaseEntity b_e = characterArray.get(4);
-//				b_e.setBattleState(BaseEntity.BattleState.ATTACK);
-//                dialog.setVisible(false);
-//				disableLowerPart();
-//                b_e.setActionConfig(config);
+                enemyCheckBoxGroup.setMaxCheckCount(1);
+                enemyCheckBoxGroup.setMaxCheckCount(1);
+                Label tip = (Label) checkDialog.getContentTable().getChild(0);
+                tip.setText("选择一个目标");
+                enemyCheckBoxGroup.getButtons().get(0).setChecked(true);
+                ResultParameter parameter = new ResultParameter(entity, BaseEntity.BattleState.ATTACK, config, false);
+                checkDialog.setObject(checkDialog.getButtonTable().getChild(0), parameter);
 				break;
 			case SKILL :
 				showSkillList();
 				break;
 			case ITEM :
+                
 				break;
 			case ESCAPE :
                 zhanTingyun.recoverPosition();
@@ -334,6 +338,32 @@ public class BattleScene {
 		}
 
 	}
+    
+    private class ResultParameter {
+        public BaseEntity entity;
+        public BaseEntity.BattleState state;
+        public BattleActionConfig config;
+        public boolean visible;
+        
+        public ResultParameter(BaseEntity entity, BaseEntity.BattleState state, BattleActionConfig config, boolean visible) {
+            this.entity = entity;
+            this.state = state;
+            this.config = config;
+            this.visible = visible;
+        }
+        
+        
+    }
+
+    private void enableConfig(BaseEntity entity, BattleActionConfig config, BaseEntity.BattleState state, boolean visiable) {
+        entity.setBattleState(state);
+        dialog.setVisible(visiable);
+        disableLowerPart();
+        entity.setActionConfig(config);
+        if(entity.getBattleState() == BaseEntity.BattleState.SKILL) {
+        	twin.setText(config.getActionName(), true);
+        }
+    }
 
 	private void disableLowerPart() {
 		dialog.setModal(true);
@@ -355,7 +385,7 @@ public class BattleScene {
     
     public void enablePlayerControl(boolean enable, BaseEntity entity) {
     	if(enable) {
-            String cn_name = BattleActionConfig.getPlayerData(entity.getName()).name;
+            String cn_name = BattleActionConfig.getCarrierData(entity.getName()).getName();
             if(FontManager.updateFont(cn_name)) {
             	messageStyle.font = FontManager.getFont();
                 message.setStyle(messageStyle);
@@ -390,11 +420,13 @@ public class BattleScene {
     
 
     private void createSkillGroup() {
+        mark = "";
         playerSkillTableMap = new ObjectMap<BaseEntity, Table>();
         TextureRegion[][] split = TextureCache.getSplit("battle/state/skill_icon", 6, 1);
         Drawable check =new TextureRegionDrawable(new Texture(Gdx.files.internal("battle/state/systemcursor.png")));
         Label.LabelStyle label_style = new Label.LabelStyle();
         label_style.font = FontManager.getFont();
+        //skillGroupArray = new Array<ButtonGroup<ImageTextButton>>();
         
         for (int i = 0; i < playerArray.size; i ++) {
             BaseEntity entity = playerArray.get(i);
@@ -405,6 +437,9 @@ public class BattleScene {
             style.font = FontManager.getFont();
             Table skill_table = new Table();
             skillTables[i] = skill_table;
+            ButtonGroup<ImageTextButton> skill_group = new ButtonGroup<ImageTextButton>();
+            //skillGroupArray.add(skill_group);
+            
             for (BattleActionConfig config : configs) {
                 if (config.getMpCost() == 0) {
                     continue;
@@ -414,16 +449,34 @@ public class BattleScene {
                 Drawable skill_icon_d = new TextureRegionDrawable(split[0][icon_index]);
                 skill_icon_d.setMinSize(13 * Constants.WIDTH_RATIO, 13 * Constants.HEIGHT_RATIO);
                 Image skill_icon = new Image(skill_icon_d);
-                final ImageTextButton box = new ImageTextButton(config.getActionName(), style);
+                final ImageTextButton skill_button = new ImageTextButton(config.getActionName(), style);
 
-                box.addListener(new InputListener() {
+                skill_button.addListener(new InputListener() {
                     @Override
                     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                        if (box.isChecked()) {
-                            entity.setBattleState(BaseEntity.BattleState.SKILL);
-                            entity.setActionConfig(config);
-                            twin.setText(config.getActionName(), true);
-                            disableLowerPart();
+                        if (skill_button.isChecked()) {
+                            if(actionManager.isAll(config)) {
+                            	enemyCheckBoxGroup.setMinCheckCount(3);
+                                enemyCheckBoxGroup.setMaxCheckCount(3);
+                                Label tip = (Label) checkDialog.getContentTable().getChild(0);
+                                tip.setText("此技能默认全选");
+                                for(CheckBox box : enemyCheckBoxGroup.getButtons()) {
+                                	box.setChecked(true);
+                                }
+                            } else {
+                                enemyCheckBoxGroup.setMinCheckCount(1);
+                                enemyCheckBoxGroup.setMaxCheckCount(1);
+                                Label tip = (Label) checkDialog.getContentTable().getChild(0);
+                                tip.setText("选择一个目标");
+                                enemyCheckBoxGroup.getButtons().get(0).setChecked(true);
+                            }
+                            ResultParameter parameter = new ResultParameter(entity, BaseEntity.BattleState.SKILL, config, true);
+                            checkDialog.setObject(checkDialog.getButtonTable().getChild(0), parameter);
+                            skill_button.setChecked(false);
+                            checkDialog.show(battleStage);
+                            //entity.setBattleState(BaseEntity.BattleState.SKILL);
+                            //entity.setActionConfig(config);
+                            //disableLowerPart();
                         } else {
                             String temp = config.getTips();
                             if (FontManager.updateFont(temp)) {
@@ -437,70 +490,28 @@ public class BattleScene {
                         return true;
                     }
                 });
-
+                
+                skill_group.add(skill_button);
                 Label label = new Label("[BLACK]气：[BLUE]" + config.getMpCost(), label_style);
                 label.setFontScale(0.5f);
 
                 HorizontalGroup hor_group = new HorizontalGroup();
                 hor_group.addActor(skill_icon);
-                hor_group.addActor(box);
+                hor_group.addActor(skill_button);
                 hor_group.addActor(label);
-                skillTables[i].left().top().add(hor_group).expand();
+                SnapshotArray children = skillTables[i].getChildren();
+                if (children != null && children.size % 2 == 1) {
+                	skillTables[i].left().top().add(hor_group).expand().row();
+                } else {
+                    skillTables[i].left().top().add(hor_group).expand();
+                }
+                //skillTables[i].left().top().add(hor_group).expand();
                 skillTables[i].setVisible(false);
             }
+            skill_group.setMinCheckCount(0);
             playerSkillTableMap.put(entity, skillTables[i]);
             bottomStack.add(skillTables[i]);
         }
-//            Image image = new Image(d);
-//            Image image_1 = new Image(d);
-//            ImageTextButton.ImageTextButtonStyle style = new ImageTextButton.ImageTextButtonStyle();
-//            style.checked = d_1;
-//            style.font = FontManager.getFont();
-//            BattleActionConfig config = BattleActionConfig.createQiongQiConfig();
-//            final ImageTextButton box = new ImageTextButton(config.getActionName(), style);
-//            ImageTextButton box_1 = new ImageTextButton("[RED]陨星泣血", style);
-//            box.addListener(
-//                    new InputListener() {
-//                        @Override
-//                        public boolean touchDown(
-//                                InputEvent event, float x, float y, int pointer, int button) {
-//                            if (box.isChecked()) {
-//                                BaseEntity b_e = characterArray.get(4);
-//                                b_e.setBattleState(BaseEntity.BattleState.SKILL);
-//                                b_e.setActionConfig(config);
-//                                twin.setText(config.getActionName(), true);
-//                                disableLowerPart();
-//                            } else {
-//                                String temp = config.getTips();
-//                                if (FontManager.updateFont(temp)) {
-//                                    messageStyle.font = FontManager.getFont();
-//                                    message.setStyle(messageStyle);
-//                                }
-//                                twin.setIsPaused();
-//                                twin.setText(temp, false);
-//                            }
-//
-//                            return true;
-//                        }
-//                    });
-//
-//            Label.LabelStyle label_style = new Label.LabelStyle();
-//            label_style.font = FontManager.getFont();
-//            Label label = new Label("[BLACK]气：[BLUE]500", label_style);
-//            Label label_1 = new Label("[BLACK]气：[BLUE]400", label_style);
-//            label.setFontScale(0.5f);
-//            label_1.setFontScale(0.5f);
-//
-//            HorizontalGroup hor_group = new HorizontalGroup();
-//            HorizontalGroup hor_group_1 = new HorizontalGroup();
-//            hor_group.addActor(image);
-//            hor_group.addActor(box);
-//            hor_group.addActor(label);
-//            hor_group_1.addActor(image_1);
-//            hor_group_1.addActor(box_1);
-//            hor_group_1.addActor(label_1);
-//            skill_table.left().top().add(hor_group).expand();
-//            skill_table.left().top().add(hor_group_1).expand();
     }
 
     private int getSkillIconIndex(BattleActionConfig config) {
@@ -587,7 +598,6 @@ public class BattleScene {
 	}
     
     private void createStateTable() {
-        mark = "";
     	stateTable = new Table();
         avatarMap = new ObjectMap<BaseEntity, Image>();
 		TextureAtlas texture_atlas = new TextureAtlas("battle/state/packer-5.atlas");
@@ -618,7 +628,7 @@ public class BattleScene {
             Image avatar = new Image();
             avatarMap.put(entity, avatar);
             avatarStack.add(avatar);
-            setStateImage(i, entity, avatar);
+            setAvatarDrawable(entity, avatar, i);
             
 
             hpBars[i] = setHpBar(texture_atlas, playerArray.get(i).getMaxHp());
@@ -637,44 +647,19 @@ public class BattleScene {
 	    stateTable.left().bottom().add(characters[2]).padBottom(9.0f).padLeft(15.71f).width(Constants.WIDTH_RATIO * 54.0f).padRight(15.71f).expandY().fill();
         bottomStack.add(stateTable);
     }
-
-    private void setStateImage(int i, BaseEntity entity, Image avatar) {
-        boolean turn = entity == turnManager.getActiveParticipant();
-        switch (entity.getBattleState()) {
-            case AWAIT:
-                if (turn) {
-                    avatar.setDrawable(avatarDrawables[i][1]);
-                } else {
-                    avatar.setDrawable(avatarDrawables[i][0]);
-                }
-                break;
-            case SKILL:
-                if (turn) {
-                    avatar.setDrawable(avatarDrawables[i][3]);
-                } else {
-                    avatar.setDrawable(avatarDrawables[i][2]);
-                }
-                break;
-            case WEAK:
-                if (turn) {
-                    avatar.setDrawable(avatarDrawables[i][5]);
-                } else {
-                    avatar.setDrawable(avatarDrawables[i][4]);
-                }
-                break;
-            case DEFEATED:
-                avatar.setDrawable(avatarDrawables[i][6]);
-                break;
-        }
-    }
     
     public void setStateImage() {
         int i = -1;
     	for(BaseEntity entity : playerArray) {
     		Image avatar = avatarMap.get(entity);
-            boolean turn = entity == turnManager.getActiveParticipant();
             i ++;
-            switch (entity.getBattleState()) {
+            setAvatarDrawable(entity, avatar, i);
+    	}
+    }
+    
+    private void setAvatarDrawable(BaseEntity entity, Image avatar, int i) {
+        boolean turn = entity == turnManager.getActiveParticipant();
+    	switch (entity.getBattleState()) {
             case AWAIT:
                 if (turn) {
                     avatar.setDrawable(avatarDrawables[i][1]);
@@ -700,7 +685,6 @@ public class BattleScene {
                 avatar.setDrawable(avatarDrawables[i][6]);
                 break;
         }
-    	}
     }
 
     private ProgressBar setHpBar(TextureAtlas atlas, float max) {
@@ -785,6 +769,84 @@ public class BattleScene {
 		dialog.setPosition(Constants.LEFT_SIDE_X, Constants.TOP_Y - dialog.getHeight());
 		dialog.show(battleStage, Actions.fadeIn(0.3f));
 	}
+    
+    private void setCheckDialog() {
+    	Drawable d = new TextureRegionDrawable(new Texture(Gdx.files.internal("battle/state/select_bg.png")));
+		d.setMinSize(Constants.WIDTH_RATIO * 99.0f, Constants.HEIGHT_RATIO * 81.5f);
+        TextureRegion[][] split = TextureCache.getSplit("battle/state/check_icon", 2, 1);
+        checkEntityMap = new ObjectMap<CheckBox, BaseEntity>();
+        Dialog.WindowStyle style = new Dialog.WindowStyle(TitleScreen.font, Color.BLACK, d);
+        checkDialog = new Dialog("", style) {
+            @Override
+            protected void result(Object o) {
+                if (o instanceof ResultParameter) {
+                	ResultParameter rst = (ResultParameter) o;
+                    actionManager.checkAim(enemyCheckBoxGroup.getAllChecked());
+                    enemyCheckBoxGroup.uncheckAll();
+                    enableConfig(rst.entity, rst.config, rst.state, rst.visible);
+                } else if (o instanceof Boolean) {
+                    boolean rst = (boolean) o;
+                    if (rst == false) {
+                        BaseEntity entity = turnManager.getActiveParticipant();
+                        String cn_name = BattleActionConfig.getCarrierData(entity.getName()).getName();
+                    	twin.setText(cn_name + "行动中", true);
+                    }
+                }
+            }
+        };
+        String temp = "选择一个目标任意即此默认可全部确定取消";
+        for(BaseEntity entity : characterArray) {
+            String cn_name = BattleActionConfig.getCarrierData(entity.getName()).getName();
+            temp += cn_name;
+        }
+        FontManager.updateFont(temp);
+        messageStyle.font = FontManager.getFont();
+        Label tip = new Label("选择一个目标", messageStyle);
+        Drawable check_box_off = new TextureRegionDrawable(split[0][0]);
+        check_box_off.setMinSize(13.0f * Constants.WIDTH_RATIO, 13.0f * Constants.HEIGHT_RATIO);
+        Drawable check_box_on = new TextureRegionDrawable(split[0][1]);
+        check_box_on.setMinSize(13.0f * Constants.WIDTH_RATIO, 13.0f * Constants.HEIGHT_RATIO);
+        CheckBox.CheckBoxStyle check_box_style = new CheckBox.CheckBoxStyle();
+        check_box_style.checkboxOff = check_box_off;
+        check_box_style.checkboxOn = check_box_on;
+		check_box_style.font = FontManager.getFont();
+        check_box_style.fontColor = Color.BLACK;
+        //ButtonGroup为逻辑控件，不负责视觉显示
+        playerCheckBoxGroup = new ButtonGroup<CheckBox>();
+        VerticalGroup player_vertical_group = new VerticalGroup();
+        enemyCheckBoxGroup = new ButtonGroup<CheckBox>();
+        VerticalGroup enemy_vertical_group = new VerticalGroup();
+        for (BaseEntity entity : characterArray) {
+            String cn_name = BattleActionConfig.getCarrierData(entity.getName()).getName();
+            CheckBox check_box = new CheckBox(cn_name, check_box_style);
+            if (playerArray.contains(entity, true)) {
+                playerCheckBoxGroup.add(check_box);
+                player_vertical_group.addActor(check_box);
+                continue;
+            }
+            enemyCheckBoxGroup.add(check_box);
+            enemy_vertical_group.addActor(check_box);
+            checkEntityMap.put(check_box, entity);
+        }
+
+        player_vertical_group.columnLeft();
+        enemy_vertical_group.columnLeft();
+        TextButton.TextButtonStyle text_button_style = new TextButton.TextButtonStyle();
+        text_button_style.font = FontManager.getFont();
+        text_button_style.fontColor = Color.BLACK;
+        TextButton confirm = new TextButton("确定", text_button_style);
+        TextButton cancel = new TextButton("取消", text_button_style);
+        
+        Table content_table = checkDialog.getContentTable();
+        content_table.left().top().add(tip).padLeft(6.0f * Constants.WIDTH_RATIO).padTop(5.0f * Constants.HEIGHT_RATIO).expandX().fill().row();
+        content_table.left().top().add(enemy_vertical_group).expand().fill();
+        Table button_table = checkDialog.getButtonTable();
+        button_table.add(confirm).expand().fill();
+        button_table.add(cancel).expand().fill();
+        checkDialog.setObject(cancel, false);
+        button_table.padBottom(5.0f * Constants.HEIGHT_RATIO);
+        
+    }
 
 	public boolean isVisible() {
 		return visible;
@@ -792,6 +854,10 @@ public class BattleScene {
     
     public Table getButtonTable() {
     	return buttonTable;
+    }
+    
+    public ObjectMap<CheckBox, BaseEntity> getCheckEntityMap() {
+        return checkEntityMap;
     }
 
 }

@@ -62,6 +62,7 @@ public class TitleScreen implements Screen {
 		fi.setScaling(Scaling.fill);
 		fi.setFillParent(true);
 		this.game.getTransStage().addActor(fi);
+        this.game.getPerformanceOverlay().addSt();
 		TextureRegion[][] temp = TextureRegion.split(gold, gold.getWidth() / 5, gold.getHeight());
 		this.goldFrame = new TextureRegion[5];
 		for (int i = 0; i < 5; i++) {

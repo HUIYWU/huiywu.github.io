@@ -548,8 +548,9 @@ public class CharacterInfomation {
 			confirmButton.addListener(new InputListener() {
 				@Override
 				public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-					activeInterface = InfomationInterface.INIT;					Array<Actor> actors = game.getTransStage().getActors();
-					for (int i = actors.size - 1; i >= 2; i--) {
+					activeInterface = InfomationInterface.INIT;				
+                    Array<Actor> actors = game.getTransStage().getActors();
+					for (int i = actors.size - 1; i >= 2; i --) {
 						actors.get(i).remove();
 					}
 					hide();

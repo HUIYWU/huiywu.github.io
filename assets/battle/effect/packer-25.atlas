@@ -1,0 +1,76 @@
+
+packer-25.png
+size: 560,228
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+animation12083
+  rotate: false
+  xy: 0, 0
+  size: 112, 114
+  orig: 112, 114
+  offset: 0, 0
+  index: 1
+animation12083
+  rotate: false
+  xy: 112, 0
+  size: 112, 114
+  orig: 112, 114
+  offset: 0, 0
+  index: 2
+animation12083
+  rotate: false
+  xy: 224, 0
+  size: 112, 114
+  orig: 112, 114
+  offset: 0, 0
+  index: 3
+animation12083
+  rotate: false
+  xy: 336, 0
+  size: 112, 114
+  orig: 112, 114
+  offset: 0, 0
+  index: 4
+animation12083
+  rotate: false
+  xy: 448, 0
+  size: 112, 114
+  orig: 112, 114
+  offset: 0, 0
+  index: 5
+animation12083
+  rotate: false
+  xy: 0, 114
+  size: 112, 114
+  orig: 112, 114
+  offset: 0, 0
+  index: 6
+animation12083
+  rotate: false
+  xy: 112, 114
+  size: 112, 114
+  orig: 112, 114
+  offset: 0, 0
+  index: 7
+animation12083
+  rotate: false
+  xy: 224, 114
+  size: 112, 114
+  orig: 112, 114
+  offset: 0, 0
+  index: 8
+animation12083
+  rotate: false
+  xy: 336, 114
+  size: 112, 114
+  orig: 112, 114
+  offset: 0, 0
+  index: 9
+animation12083
+  rotate: false
+  xy: 448, 114
+  size: 112, 114
+  orig: 112, 114
+  offset: 0, 0
+  index: 10

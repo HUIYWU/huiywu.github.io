@@ -1,0 +1,76 @@
+
+packer-23.png
+size: 550,228
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+animation08004
+  rotate: false
+  xy: 0, 0
+  size: 110, 114
+  orig: 110, 114
+  offset: 0, 0
+  index: 1
+animation08004
+  rotate: false
+  xy: 110, 0
+  size: 110, 114
+  orig: 110, 114
+  offset: 0, 0
+  index: 2
+animation08004
+  rotate: false
+  xy: 220, 0
+  size: 110, 114
+  orig: 110, 114
+  offset: 0, 0
+  index: 3
+animation08004
+  rotate: false
+  xy: 330, 0
+  size: 110, 114
+  orig: 110, 114
+  offset: 0, 0
+  index: 4
+animation08004
+  rotate: false
+  xy: 440, 0
+  size: 110, 114
+  orig: 110, 114
+  offset: 0, 0
+  index: 5
+animation08004
+  rotate: false
+  xy: 0, 114
+  size: 110, 114
+  orig: 110, 114
+  offset: 0, 0
+  index: 6
+animation08004
+  rotate: false
+  xy: 110, 114
+  size: 110, 114
+  orig: 110, 114
+  offset: 0, 0
+  index: 7
+animation08004
+  rotate: false
+  xy: 220, 114
+  size: 110, 114
+  orig: 110, 114
+  offset: 0, 0
+  index: 8
+animation08004
+  rotate: false
+  xy: 330, 114
+  size: 110, 114
+  orig: 110, 114
+  offset: 0, 0
+  index: 9
+animation08004
+  rotate: false
+  xy: 440, 114
+  size: 110, 114
+  orig: 110, 114
+  offset: 0, 0
+  index: 10
