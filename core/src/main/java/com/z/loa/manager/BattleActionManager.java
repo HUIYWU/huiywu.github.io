@@ -77,6 +77,25 @@ public class BattleActionManager {
     	return aims;
     }
     
+    public Array<BaseEntity> selectAim(BattleActionConfig config, Array<BaseEntity> players) {
+        aims.clear();
+        BattleActionConfig.AimType type = config.getAimType();
+        switch (type) {
+            case ENEMY_SINGLE:
+            case FRIEND_SINGLE:
+                aims.addAll(players);
+                break;
+            case ENEMY_ALL:
+            case FRIEND_ALL:
+                aims.addAll(players);
+                return null;
+            default:
+                throw new IllegalArgumentException("config的aimType参数异常");
+        }
+        
+    	return aims;
+    }
+    
     public void triggerAction(BaseEntity target, BattleActionConfig config) {
     	target.setBattleState(BaseEntity.BattleState.values()[config.getStateIndex()]);
         target.setStateTime(0);

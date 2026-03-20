@@ -61,10 +61,11 @@ public class BattleActionConfig {
         if(configsMap.containsKey(name)) {
         	return configsMap.get(name);
         }
-        ActionData.Player player = data.players.get(name);
-        String text = player.actionString;
+        
+        ActionCarrier carrier = getCarrierData(name);
+        String text = carrier.getActionString();
         FontManager.updateFont(text);
-        Array<String> actions = player.actionArray;
+        Array<String> actions = carrier.getActionArray();
         BattleActionConfig[] configs = new BattleActionConfig[actions.size];
         for (int i = 0; i < configs.length; i++) {
             String id = actions.get(i);

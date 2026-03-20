@@ -38,16 +38,17 @@ public class EffectManager {
                 BattleScene.EffectActor effect_actor = battleScene.new EffectActor(target, animation, x, y, width, height);
                 effectGroup.addActor(effect_actor);
                 break;
-            } else if (config.getSize()[0] >= aim.getWidth() * 1.8) {
-                x = aim.getX() - config.getSize()[0] * 0.2f;
-                y = aim.getY();
+//            } else if (config.getSize()[0] >= aim.getWidth() * 1.8) {
+//                x = aim.getX() - config.getSize()[0] * 0.2f;
+//                y = aim.getY();
             }else {
-                x = aim.getX();
+                x = aim.getX() + (aim.getWidth() - width) / 2;
                 y = aim.getY();
             }
             
             BattleScene.EffectActor effect_actor = battleScene.new EffectActor(target, animation, x, y, width, height);
             effectGroup.addActor(effect_actor);
+            aim.setBattleState(BaseEntity.BattleState.DEFEND);
         }
     }
     //objectives是闪烁对象Array,不一定含事件发起对象

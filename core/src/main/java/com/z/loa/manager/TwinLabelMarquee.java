@@ -1,5 +1,6 @@
 package com.z.loa.manager;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 
@@ -27,6 +28,8 @@ public class TwinLabelMarquee extends Group {
 	}
 
 	public void setText(String text) {
+        //this.style.font = FontManager.getFont();
+        //Gdx.app.log("twin-debug", "style.hashcode=" + style.hashCode()  + " text='" + text + "'");
 		leftLabel.setStyle(style);
 		leftLabel.setText(text);
         rightLabel.setStyle(style);

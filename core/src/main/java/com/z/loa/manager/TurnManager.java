@@ -1,6 +1,7 @@
 package com.z.loa.manager;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -19,6 +20,7 @@ public class TurnManager {
     private BattleActionManager actionManager;
     private EffectManager effectManager;
     private int turnIndex;
+    //private int independentVariable;
     private BaseEntity activeParticipant;
     private boolean waitingForOperation;
 
@@ -56,8 +58,12 @@ public class TurnManager {
                                 	scene.recoverLowerPart();
                                     scene.clearTwinText();
                                     scene.enableDialog(true);
-                                    endTurn();
+                                    for(BaseEntity aim : actionManager.getAims()) {
+                                    	aim.setBattleState(BaseEntity.BattleState.AWAIT);
+                                    }
                                     round = false;
+                                    endTurn();
+                                    
                                 }
                                 return true;
                             } else if (event instanceof EffectTriggerEvent) {
@@ -91,6 +97,7 @@ public class TurnManager {
     }
 
     public void startBattle() {
+        //independentVariable = 0;
         turnIndex = 3;
         Timer.schedule(
                 new Timer.Task() {
@@ -112,6 +119,8 @@ public class TurnManager {
             // 实现与BattleScene的交流
         } else {
             waitingForOperation = false;
+            scene.enablePlayerControl(false, activeParticipant);
+            scene.setStateImage();
             // 同上
             excuteAIOperation(); // ...
         }
@@ -123,10 +132,11 @@ public class TurnManager {
             activeParticipant.resetEventFire();
             activeParticipant.setActionConfig(null);
         }
-        
+        //independentVariable ++;
+        //turnIndex = (independentVariable + 3) % 6;
         turnIndex ++;
-        if(turnIndex == participants.size) {
-        	turnIndex = 3;
+        if (turnIndex == participants.size) {
+        	turnIndex = 0;
         }
         startTurn();
     }
@@ -145,7 +155,18 @@ public class TurnManager {
     }
 
     private void excuteAIOperation() {
-        BattleActionConfig config = BattleActionConfig.obtainConfigs(activeParticipant.getName())[0];
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                BattleActionConfig[] configs = BattleActionConfig.obtainConfigs(activeParticipant.getName());
+                BattleActionConfig config = configs[MathUtils.random(0, configs.length - 1)];
+                
+                actionManager.selectAim(config, players);
+                activeParticipant.setBattleState(BaseEntity.BattleState.ATTACK);
+                activeParticipant.setActionConfig(config);
+            }
+            
+        }, 0.2f);
         //...
     }
 

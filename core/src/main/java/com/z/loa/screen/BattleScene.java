@@ -56,7 +56,7 @@ public class BattleScene {
     private ButtonGroup<CheckBox> enemyCheckBoxGroup;
 	private Dialog dialog;
     private Dialog checkDialog;
-	private Label message;
+	//private Label message;
 	private Label.LabelStyle messageStyle;
 
 	private Image buttonMask;
@@ -105,8 +105,8 @@ public class BattleScene {
 		effectAnimationMap.put("animation01003",new Animation<TextureRegion>(0.2f, atlas_1.findRegions("animation01003")));
 		effectAnimationMap.put("animation07002",new Animation<TextureRegion>(0.2f, atlas_2.findRegions("animation07002")));
 		effectAnimationMap.put("animation07003",new Animation<TextureRegion>(0.2f, atlas_3.findRegions("animation07003")));
-        String[] temp = {"01009", "12080", "12081", "12026", "12025", "12077", "12078", "12079", "09006", "12033", "05009", "08004"};
-        for (int i = 12; i <= 23; i++) {
+        String[] temp = {"01009", "12080", "12081", "12026", "12025", "12077", "12078", "12079", "09006", "12033", "05009", "08004", "12082", "12083"};
+        for (int i = 12; i <= 25; i++) {
             TextureAtlas atlas_t =new TextureAtlas(Gdx.files.internal(String.format("battle/effect/packer-%d.atlas", i)));
             String region_name = "animation" + temp[i - 12];
             Animation<TextureRegion> animation = new Animation<TextureRegion>(0.2f, atlas_t.findRegions(region_name));
@@ -388,12 +388,13 @@ public class BattleScene {
             String cn_name = BattleActionConfig.getCarrierData(entity.getName()).getName();
             if(FontManager.updateFont(cn_name)) {
             	messageStyle.font = FontManager.getFont();
-                message.setStyle(messageStyle);
+                //message.setStyle(messageStyle);
             }
             twin.setText(cn_name + "行动中", true);
             recoverLowerPart();
     	} else {
             clearTwinText();
+            dialog.setVisible(false);
             disableLowerPart();
         }
     }
@@ -438,6 +439,7 @@ public class BattleScene {
             Table skill_table = new Table();
             skillTables[i] = skill_table;
             ButtonGroup<ImageTextButton> skill_group = new ButtonGroup<ImageTextButton>();
+            skill_group.setMinCheckCount(0);
             //skillGroupArray.add(skill_group);
             
             for (BattleActionConfig config : configs) {
@@ -481,7 +483,7 @@ public class BattleScene {
                             String temp = config.getTips();
                             if (FontManager.updateFont(temp)) {
                                 messageStyle.font = FontManager.getFont();
-                                message.setStyle(messageStyle);
+                                //message.setStyle(messageStyle);
                             }
                             twin.setIsPaused();
                             twin.setText(temp, false);
@@ -753,7 +755,7 @@ public class BattleScene {
 		dialog = new Dialog("", style);
 		messageStyle = new Label.LabelStyle();
 		messageStyle.font = FontManager.getFont();
-		message = new Label("", messageStyle);
+		//message = new Label("", messageStyle);
 
 		twin = new TwinLabelMarquee(messageStyle, "");
 		twin.setSize(750, 103.5f);

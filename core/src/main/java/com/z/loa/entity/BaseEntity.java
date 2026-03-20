@@ -33,8 +33,8 @@ public class BaseEntity extends Actor {
     protected Animation<TextureRegion> moodAnimation;
     protected TextureRegion[] idleTextureArray;
 
-    private BattleActionConfig actionConfig;
-    private boolean eventFire;
+    protected BattleActionConfig actionConfig;
+    protected boolean eventFire;
     private Runnable EffectTime;
     private ShaderProgram shader;
     private boolean enabled;
@@ -188,7 +188,7 @@ public class BaseEntity extends Actor {
         }
     }
 
-    private void matchAnimation() {
+    protected void matchAnimation() {
         switch (entityState) {
             case IDLE:
                 switch (orientation) {
@@ -209,55 +209,7 @@ public class BaseEntity extends Actor {
                 }
                 break;
             case BATTLE:
-                switch (battleState) {
-                    case AWAIT:
-                        currentFrame = battleAnimation[0].getKeyFrame(stateTime);
-                        break;
-                    case ATTACK:
-                        Animation<TextureRegion> animation = battleAnimation[1];
-                        int index = animation.getKeyFrameIndex(stateTime);
-                        if (actionConfig != null) {
-                            if (index == actionConfig.getEffectTriggerIndex() && !eventFire) {
-                                this.fire(new EffectTriggerEvent(actionConfig));
-                                eventFire = true;
-                            }
-                        }
-                        if (animation.isAnimationFinished(stateTime)) {
-                            battleState = BattleState.AWAIT;
-                        }
-                        currentFrame = animation.getKeyFrame(stateTime);
-
-                        break;
-                    case SKILL:
-                        Animation<TextureRegion> animation_1 = battleAnimation[2];
-                        int index_1 = animation_1.getKeyFrameIndex(stateTime);
-                        if (actionConfig != null) {
-                            if (index_1 == actionConfig.getEffectTriggerIndex() && !eventFire) {
-                                this.fire(new EffectTriggerEvent(actionConfig));
-                                eventFire = true;
-                            }
-                        }
-                        currentFrame = battleAnimation[2].getKeyFrame(stateTime);
-
-                        break;
-                    case DEFEND:
-                        currentFrame = battleAnimation[3].getKeyFrame(stateTime);
-
-                        break;
-                    case WEAK:
-                        currentFrame = battleAnimation[4].getKeyFrame(stateTime);
-
-                        break;
-                    case DEFEATED:
-                        currentFrame = battleAnimation[5].getKeyFrame(stateTime);
-
-                        break;
-                    case WON:
-                        currentFrame = battleAnimation[6].getKeyFrame(stateTime);
-
-                        break;
-                }
-
+                matchBattleAnimation();
                 break;
             case MOVE:
                 GameScreen.onMoved();
@@ -281,4 +233,54 @@ public class BaseEntity extends Actor {
         }
     }
 
+    protected void matchBattleAnimation() {
+        switch (battleState) {
+            case AWAIT:
+                currentFrame = battleAnimation[0].getKeyFrame(stateTime);
+                break;
+            case ATTACK:
+                Animation<TextureRegion> animation = battleAnimation[1];
+                int index = animation.getKeyFrameIndex(stateTime);
+                if (actionConfig != null) {
+                    if (index == actionConfig.getEffectTriggerIndex() && !eventFire) {
+                        this.fire(new EffectTriggerEvent(actionConfig));
+                        eventFire = true;
+                    }
+                }
+                if (animation.isAnimationFinished(stateTime)) {
+                    battleState = BattleState.AWAIT;
+                }
+                currentFrame = animation.getKeyFrame(stateTime);
+
+                break;
+            case SKILL:
+                Animation<TextureRegion> animation_1 = battleAnimation[2];
+                int index_1 = animation_1.getKeyFrameIndex(stateTime);
+                if (actionConfig != null) {
+                    if (index_1 == actionConfig.getEffectTriggerIndex() && !eventFire) {
+                        this.fire(new EffectTriggerEvent(actionConfig));
+                        eventFire = true;
+                    }
+                }
+                currentFrame = battleAnimation[2].getKeyFrame(stateTime);
+
+                break;
+            case DEFEND:
+                currentFrame = battleAnimation[3].getKeyFrame(stateTime);
+
+                break;
+            case WEAK:
+                currentFrame = battleAnimation[4].getKeyFrame(stateTime);
+
+                break;
+            case DEFEATED:
+                currentFrame = battleAnimation[5].getKeyFrame(stateTime);
+
+                break;
+            case WON:
+                currentFrame = battleAnimation[6].getKeyFrame(stateTime);
+
+                break;
+        }
+    }
 }

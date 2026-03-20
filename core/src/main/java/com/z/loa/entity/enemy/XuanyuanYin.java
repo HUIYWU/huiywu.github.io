@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.*;
 import com.z.loa.*;
 import com.z.loa.entity.*;
 
-public class XuanyuanYin extends BaseEntity {
+public class XuanyuanYin extends EnemyEntity {
 	private Array<TextureAtlas.AtlasRegion> await;
 	private TextureAtlas atlas;
 

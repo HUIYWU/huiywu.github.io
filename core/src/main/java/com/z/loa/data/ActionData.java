@@ -15,32 +15,38 @@ public class ActionData {
         actions = new ObjectMap<String, Action>();
     }
 
-    public static class Player implements ActionCarrier {
+    public static class Carrier implements ActionCarrier {
         public String name;
         public String actionString;
         public Array<String> actionArray;
-
-        public Player() {}
+        
+        public Carrier() {}
         
         @Override
         public String getName() {
             return name;
+        }
+
+        @Override
+        public String getActionString() {
+            return actionString;
+        }
+
+        @Override
+        public Array<String> getActionArray() {
+            return actionArray;
         }
         
     }
 
-    public static class Enemy implements ActionCarrier {
-        public String name;
-        public String actionString;
-        public Array<String> actionArray;
+    public static class Player extends Carrier {
+        public Player() {}
 
+    }
+
+    public static class Enemy extends Carrier {
         public Enemy() {}
-        
-        @Override
-        public String getName() {
-            return name;
-        }
-        
+
     }
 
     public static class Action {

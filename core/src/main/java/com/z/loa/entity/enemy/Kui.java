@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.z.loa.Constants;
 import com.z.loa.entity.BaseEntity;
 
-public class Kui extends BaseEntity {
+public class Kui extends EnemyEntity {
    private Array<TextureAtlas.AtlasRegion> await;
 	private TextureAtlas atlas;
 
