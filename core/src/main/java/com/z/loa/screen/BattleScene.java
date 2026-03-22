@@ -28,16 +28,15 @@ public class BattleScene {
     private float battleStackWidth;
     private float battleStackHeight;
 	private Table buttonTable;
-    private TextButton activeButton;
+    //private TextButton activeButton;
     private Stack bottomStack;
     private Table stateTable;
     private Stack avatarStack;
     
     private Table[] skillTables;
-    private Table itemTable;
+    //private Table itemTable;
 	private BottomBar activeBar;
 	private TextureRegionDrawable[] drawable;
-    //private Array<TextureRegionDrawable>[] avatarDrawables;
     private TextureRegionDrawable[][] avatarDrawables;
 	private TextButton[] buttons;
 	private ObjectMap<String, Animation<TextureRegion>> effectAnimationMap;
@@ -50,13 +49,12 @@ public class BattleScene {
 	private Group characterGroup;
 	private Array<BaseEntity> characterArray;
     private Array<BaseEntity> playerArray;
-	private Group effectGroup;
-    //private Array<ButtonGroup<ImageTextButton>> skillGroupArray;
+    private Array<EffectActor> pendingAddEffects;
+    private Array<EffectActor> pendingRemoveEffects;
     private ButtonGroup<CheckBox> playerCheckBoxGroup;
     private ButtonGroup<CheckBox> enemyCheckBoxGroup;
 	private Dialog dialog;
     private Dialog checkDialog;
-	//private Label message;
 	private Label.LabelStyle messageStyle;
 
 	private Image buttonMask;
@@ -150,16 +148,11 @@ public class BattleScene {
         characterGroup = new Group();
 		characterArray = new Array<BaseEntity>();
         playerArray = new Array<BaseEntity>();
-		effectGroup = new Group();
+        pendingAddEffects = new Array<EffectActor>();
+        pendingRemoveEffects = new Array<EffectActor>();
 		battleStack.add(characterGroup);
-		battleStack.add(effectGroup);
-//        for(Actor b_e : characterGroup.getChildren()) {
-//        	Gdx.app.error("角色z索引", "" + b_e.getZIndex());
-//        }
-//        Gdx.app.error("effectZ索引", "" + effectGroup.getZIndex());
         actionManager = new BattleActionManager(characterArray, this);
-        effectManager = new EffectManager(effectGroup, effectAnimationMap, this);
-        
+        effectManager = new EffectManager(this, characterGroup, pendingAddEffects);
     }
     
     public void placeEntity() {
@@ -194,8 +187,10 @@ public class BattleScene {
         characterGroup.addActor(qi_wei_zi);
         characterGroup.addActor(zhan_qianren);
 		characterGroup.addActor(zhanTingyun);
-        if(characterArray.isEmpty()) {
-        	characterArray.addAll((Array)characterGroup.getChildren());
+        if (characterArray.isEmpty()) {
+            for (int i = 0; i < characterGroup.getChildren().size; i++) {
+                characterArray.add((BaseEntity) characterGroup.getChild(i));
+            }
             playerArray.add(qi_wei_zi, zhan_qianren, zhanTingyun);
         }
         turnManager = new TurnManager(characterArray, playerArray, this);
@@ -213,47 +208,53 @@ public class BattleScene {
 	}
 
 	public class EffectActor extends Actor {
+        public static EffectManager.EffectPool pool;
+        private String id;
         private BaseEntity target;
-		private TextureRegion currentFrame;
+        public BaseEntity aim;
 		private float stateTime;
-		private String key;
 		private float x, y, width, height;
-		private Animation<TextureRegion> animation;
+        private TextureRegion currentFrame;
         
-        public EffectActor(BaseEntity target, Animation<TextureRegion> animation, float x, float y, float width, float height) {
-			this.target = target;
-            this.animation = animation;
+        public EffectActor() {}
+        
+        public void init(String id, BaseEntity target,BaseEntity aim,  float x, float y, float width, float height) {
+            this.id = id;
+            this.target = target;
+            this.aim = aim;
 			this.x = x;
 			this.y = y;
 			this.width = width;
 			this.height = height;
-		}
+            this.stateTime = 0.0f;
+        }
         
-		public EffectActor(String key, float x, float y, float width, float height) {
-			this.key = key;
-			this.x = x;
-			this.y = y;
-			this.width = width;
-			this.height = height;
-		}
+        public void reset() {
+            this.id = null;
+        	this.target = this.aim = null;
+			this.x = this.y = this.width = this.height = 0.0f;
+            this.currentFrame = null;
+        }
 
 		@Override
 		public void act(float delta) {
+            super.act(delta);
 			stateTime += delta;
+            Animation<TextureRegion> animation = effectAnimationMap.get(id);
 			currentFrame = animation.getKeyFrame(stateTime);
 			if (animation.isAnimationFinished(stateTime)) {
-				effectGroup.removeActor(this);
+                pendingRemoveEffects.add(this);
                 target.fire(new EffectFinishEvent());
+                //pool.free(this);
 			}
 		}
 
-		@Override
-		public void draw(Batch batch, float parentAlpha) {
-			batch.draw(currentFrame, x, y, width, height);
-		}
-
+        @Override
+        public void draw(Batch batch, float parentAlpha) {
+            batch.draw(currentFrame, x, y, width, height);
+        }
 	}
-
+    
 	private void createButtons() {
         buttonMask = new Image(drawable[2]);
 		buttonMask.setColor(0, 0, 0, 0.4f);
@@ -355,13 +356,16 @@ public class BattleScene {
         
     }
 
-    private void enableConfig(BaseEntity entity, BattleActionConfig config, BaseEntity.BattleState state, boolean visiable) {
+    public void enableConfig(BaseEntity entity, BattleActionConfig config, BaseEntity.BattleState state, boolean visiable) {
         entity.setBattleState(state);
         dialog.setVisible(visiable);
         disableLowerPart();
         entity.setActionConfig(config);
-        if(entity.getBattleState() == BaseEntity.BattleState.SKILL) {
-        	twin.setText(config.getActionName(), true);
+        if (entity.getBattleState() == BaseEntity.BattleState.SKILL) {
+            if(messageStyle.font.getCache() != FontManager.getFont().getCache()) {
+            	messageStyle.font = FontManager.getFont();
+            }
+            twin.setText(config.getActionName(), true);
         }
     }
 
@@ -383,20 +387,13 @@ public class BattleScene {
     	dialog.setVisible(enable);
     }
     
-    public void enablePlayerControl(boolean enable, BaseEntity entity) {
-    	if(enable) {
+    public void enablePlayerControl(BaseEntity entity) {
             String cn_name = BattleActionConfig.getCarrierData(entity.getName()).getName();
             if(FontManager.updateFont(cn_name)) {
             	messageStyle.font = FontManager.getFont();
-                //message.setStyle(messageStyle);
             }
             twin.setText(cn_name + "行动中", true);
             recoverLowerPart();
-    	} else {
-            clearTwinText();
-            dialog.setVisible(false);
-            disableLowerPart();
-        }
     }
 
 	private void showSkillList() {
@@ -413,21 +410,17 @@ public class BattleScene {
                 t.setVisible(false);
             }
         }
-        //skillTable.setVisible(true);
         stateTable.setVisible(false);
-        //Gdx.app.error("Table大小为：", "宽：" + table.getWidth() + " 高：" + table.getHeight());
 	}
     
     
 
     private void createSkillGroup() {
-        mark = "";
         playerSkillTableMap = new ObjectMap<BaseEntity, Table>();
         TextureRegion[][] split = TextureCache.getSplit("battle/state/skill_icon", 6, 1);
         Drawable check =new TextureRegionDrawable(new Texture(Gdx.files.internal("battle/state/systemcursor.png")));
         Label.LabelStyle label_style = new Label.LabelStyle();
         label_style.font = FontManager.getFont();
-        //skillGroupArray = new Array<ButtonGroup<ImageTextButton>>();
         
         for (int i = 0; i < playerArray.size; i ++) {
             BaseEntity entity = playerArray.get(i);
@@ -440,7 +433,6 @@ public class BattleScene {
             skillTables[i] = skill_table;
             ButtonGroup<ImageTextButton> skill_group = new ButtonGroup<ImageTextButton>();
             skill_group.setMinCheckCount(0);
-            //skillGroupArray.add(skill_group);
             
             for (BattleActionConfig config : configs) {
                 if (config.getMpCost() == 0) {
@@ -476,14 +468,10 @@ public class BattleScene {
                             checkDialog.setObject(checkDialog.getButtonTable().getChild(0), parameter);
                             skill_button.setChecked(false);
                             checkDialog.show(battleStage);
-                            //entity.setBattleState(BaseEntity.BattleState.SKILL);
-                            //entity.setActionConfig(config);
-                            //disableLowerPart();
                         } else {
                             String temp = config.getTips();
                             if (FontManager.updateFont(temp)) {
                                 messageStyle.font = FontManager.getFont();
-                                //message.setStyle(messageStyle);
                             }
                             twin.setIsPaused();
                             twin.setText(temp, false);
@@ -507,7 +495,6 @@ public class BattleScene {
                 } else {
                     skillTables[i].left().top().add(hor_group).expand();
                 }
-                //skillTables[i].left().top().add(hor_group).expand();
                 skillTables[i].setVisible(false);
             }
             skill_group.setMinCheckCount(0);
@@ -559,14 +546,34 @@ public class BattleScene {
             default:
                 throw new IllegalArgumentException("actionType没有值对应，json中可能未声明");
         }
-        
         return index;
     }
 
-	public void render() {
+     public boolean ena = false;
+
+    public void render() {
+        mark = "";
+        //辅助特效事件，统一添加与移除特效
+        if (turnManager != null) {
+            if (turnManager.isEventRound()) {
+                for (int i = 0; i < pendingAddEffects.size; i++) {
+                    EffectActor effect_actor = pendingAddEffects.get(i);
+                    characterGroup.addActorAfter(effect_actor.aim, effect_actor);
+                }
+            } else if (!turnManager.isEventRound()) {
+                for (int i = 0; i < pendingRemoveEffects.size; i++) {
+                    EffectActor effect = pendingRemoveEffects.get(i);
+                    characterGroup.removeActor(effect);
+                    EffectActor.pool.free(effect);
+                }
+                pendingRemoveEffects.clear();
+            }
+        }
+        
 		battleStage.act();
 		battleStage.draw();
 	}
+    
 
 	private class OffsetKnobDrawable extends TextureRegionDrawable {
 		public OffsetKnobDrawable(TextureRegion region) {
@@ -575,12 +582,8 @@ public class BattleScene {
 
 		@Override
 		public void draw(Batch batch, float x, float y, float width, float height) {
-            //float offset_x = x * 1.0325f; 4.9725;
-            float offset_x =  x + 6.1364f;
-			//float offset_width = width * 0.9675f; -8.1900
-            float offset_width = width - 12.2728f;
-           // Gdx.app.error("Knob的x偏移长为：" , (offset_x - x) + "");
-            //Gdx.app.error("Knob的width偏移长为：", (offset_width - width) + "");
+            float offset_x =  x + Constants.WIDTH_RATIO;
+            float offset_width = width - 2 * Constants.WIDTH_RATIO;
 			super.draw(batch, offset_x, y, offset_width, height);
 		}
 	}
@@ -755,7 +758,6 @@ public class BattleScene {
 		dialog = new Dialog("", style);
 		messageStyle = new Label.LabelStyle();
 		messageStyle.font = FontManager.getFont();
-		//message = new Label("", messageStyle);
 
 		twin = new TwinLabelMarquee(messageStyle, "");
 		twin.setSize(750, 103.5f);
@@ -796,6 +798,7 @@ public class BattleScene {
                 }
             }
         };
+        
         String temp = "选择一个目标任意即此默认可全部确定取消";
         for(BaseEntity entity : characterArray) {
             String cn_name = BattleActionConfig.getCarrierData(entity.getName()).getName();
@@ -861,7 +864,7 @@ public class BattleScene {
     public ObjectMap<CheckBox, BaseEntity> getCheckEntityMap() {
         return checkEntityMap;
     }
-
+    
 }
 
 

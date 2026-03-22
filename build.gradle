@@ -17,6 +17,7 @@ allprojects {
 
 configure(subprojects - project(':app')) {
     apply plugin: 'java-library'
+    
     compileJava {
         options.incremental = true
     }

@@ -1,50 +1,20 @@
 {
   "allFiles": [
     {
-      "file": "/storage/emulated/0/AndroidIDEProjects/MyGdxACS/core/src/main/java/com/z/loa/data/ActionData.java",
+      "file": "/storage/emulated/0/AndroidIDEProjects/MyGdxACS/core/src/main/java/com/z/loa/manager/TurnManager.java",
       "selection": {
         "end": {
-          "column": 0,
-          "index": 0,
-          "line": 0
+          "column": 27,
+          "index": 1277,
+          "line": 33
         },
         "start": {
-          "column": 0,
-          "index": 0,
-          "line": 0
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/MyGdxACS/plan.txt",
-      "selection": {
-        "end": {
-          "column": 11,
-          "index": 124,
-          "line": 6
-        },
-        "start": {
-          "column": 11,
-          "index": 124,
-          "line": 6
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/MyGdxACS/core/src/main/java/com/z/loa/entity/enemy/EnemyEntity.java",
-      "selection": {
-        "end": {
-          "column": 0,
-          "index": 0,
-          "line": 0
-        },
-        "start": {
-          "column": 0,
-          "index": 0,
-          "line": 0
+          "column": 27,
+          "index": 1277,
+          "line": 33
         }
       }
     }
   ],
-  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/MyGdxACS/core/src/main/java/com/z/loa/data/ActionData.java"
+  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/MyGdxACS/core/src/main/java/com/z/loa/manager/TurnManager.java"
 }

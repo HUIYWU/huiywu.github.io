@@ -6,26 +6,31 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Timer;
 import com.z.loa.entity.BaseEntity;
 import com.z.loa.entity.config.BattleActionConfig;
 import com.z.loa.screen.BattleScene;
 
 public class EffectManager {
-    private Group effectGroup;
-    private ObjectMap<String, Animation<TextureRegion>> animationMap;
     private BattleScene battleScene;
+    private Group characterGroup;
+    private Array<BattleScene.EffectActor> pendingAddEffects;
+    private EffectPool pool;
     
-    public EffectManager(Group effect, ObjectMap<String, Animation<TextureRegion>> animation, BattleScene scene) {
-        this.effectGroup = effect;
-        this.animationMap = animation;
+    public EffectManager(BattleScene scene, Group character, Array<BattleScene.EffectActor> pending_add) {
         this.battleScene = scene;
+        this.characterGroup = character;
+        this.pendingAddEffects = pending_add;
+        this.pool = BattleScene.EffectActor.pool = new EffectPool();
     }
     
-    //target用于发起特效结束事件
+    /**
+     * @param target 一般用于发起特效结束事件，在特殊分支用于定位顺序
+     */
     public void postEffect(BattleActionConfig config, BaseEntity target, Array<BaseEntity> aims) {
-    	String key = config.getEffectId();
-        Animation<TextureRegion> animation = animationMap.get(key);
+    	String id = config.getEffectId();
+        pendingAddEffects.clear();
         for (BaseEntity aim : aims) {
             float[] size = config.getSize();
             float width = size[0];
@@ -35,23 +40,25 @@ public class EffectManager {
                 float[] position = config.getPosition();
                 x = position[0];
                 y = position[1];
-                BattleScene.EffectActor effect_actor = battleScene.new EffectActor(target, animation, x, y, width, height);
-                effectGroup.addActor(effect_actor);
+                BattleScene.EffectActor effect_actor = pool.obtainEffect(id, target, target, x, y, width, height);
+                pendingAddEffects.add(effect_actor);
+                for(BaseEntity aim_1 : aims) {
+                	aim_1.setBattleState(BaseEntity.BattleState.DEFEATED);
+                }
                 break;
-//            } else if (config.getSize()[0] >= aim.getWidth() * 1.8) {
-//                x = aim.getX() - config.getSize()[0] * 0.2f;
-//                y = aim.getY();
-            }else {
+            } else {
                 x = aim.getX() + (aim.getWidth() - width) / 2;
                 y = aim.getY();
             }
             
-            BattleScene.EffectActor effect_actor = battleScene.new EffectActor(target, animation, x, y, width, height);
-            effectGroup.addActor(effect_actor);
+            BattleScene.EffectActor effect_actor = pool.obtainEffect(id, target, aim, x, y, width, height);
+            pendingAddEffects.add(effect_actor);
             aim.setBattleState(BaseEntity.BattleState.DEFEND);
         }
     }
-    //objectives是闪烁对象Array,不一定含事件发起对象
+    /**
+     * @param objectives 闪烁对象Array, 不一定包含事件发起对象
+     */
     public void postFlash(BattleActionConfig config, Array<BaseEntity> objectives) {
         for (BaseEntity objective : objectives) {
             int count = config.getFlashCount();
@@ -69,5 +76,25 @@ public class EffectManager {
                 }
             },delay_time);
         }
+    }
+
+    public class EffectPool extends Pool<BattleScene.EffectActor> {
+        @Override
+        protected BattleScene.EffectActor newObject() {
+            return battleScene. new EffectActor();
+        }
+
+        @Override
+        protected void reset(BattleScene.EffectActor effect) {
+            super.reset(effect);
+            effect.reset();
+        }
+        
+        public BattleScene.EffectActor obtainEffect(String id, BaseEntity target, BaseEntity aim, float x, float y, float width, float height) {
+            BattleScene.EffectActor effect = super.obtain();
+            effect.init(id, target, aim, x, y, width, height);
+        	return effect;
+        }
+        
     }
 }

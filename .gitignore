@@ -1,4 +1,6 @@
 /build
 /app/build
 /core/build
+/core/src/main/java/java
+/core/src/main/java/javax
 *.html

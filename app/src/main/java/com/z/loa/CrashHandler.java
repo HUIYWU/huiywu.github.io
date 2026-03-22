@@ -148,9 +148,10 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
                 // 旧版本使用 versionCode，并转换为 long 类型
                 @SuppressWarnings("deprecation")
                 long versionCode = pi.versionCode;
-                return pi.versionName + "(" + pi.versionCode + ")";
+                return pi.versionName + "(" + versionCode + ")";
             }        
         } catch (Exception e) {
+            e.printStackTrace();
             return "unknown";
         }
     }

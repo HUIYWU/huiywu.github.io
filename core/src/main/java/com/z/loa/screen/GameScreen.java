@@ -39,6 +39,7 @@ public class GameScreen implements Screen {
 	private static ZhanTingyun zhanTingyun;
 
 	private OrthographicCamera camera;
+    private float[] cameraPosition;
 	private ScreenViewport mainViewport;
 	private ScreenViewport uiViewport;
 	private Stage stage;
@@ -95,6 +96,7 @@ public class GameScreen implements Screen {
 		});
 
 		camera = new OrthographicCamera();
+        cameraPosition = new float[2];
 		mainViewport = new ScreenViewport(camera);
 		uiViewport = new ScreenViewport();
 		stage = new Stage(mainViewport);
@@ -265,6 +267,7 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void render(float p) {
+        //剪刀测试用于限制内容显示区域
 		Gdx.gl.glEnable(GL20.GL_SCISSOR_TEST);
 		Gdx.gl.glScissor((int) Constants.WIDTH * 2 / 15, (int) (Constants.HEIGHT - 930) / 2 ,//45 / 152
 				MathUtils.ceil(Constants.VISION_WIDTH), MathUtils.ceil(Constants.VISION_HEIGHT));
@@ -343,28 +346,32 @@ public class GameScreen implements Screen {
 		collision = MapsManager.collision;
 	}
 
+    //主要用于单一场景
 	private void updateCamera() {
-		float min_x = Constants.VISION_WIDTH / 2f;
-		float max_x = MapsManager.mapPixelWidth * scale - min_x;
-		float min_y = 930 / 2f;
-		float max_y = MapsManager.mapPixelHeight * scale - 1050 / 2f;
-		float camera_x = MathUtils.clamp(zhanTingyun.getX(), min_x, max_x);
-		float camera_y = MathUtils.clamp(zhanTingyun.getY(), min_y, max_y);
-        float x = Interpolation.smooth.apply(camera.position.x, camera_x, 0.3f);
-        float y = Interpolation.smooth.apply(camera.position.y, camera_y, 0.3f);
+		calculateCameraPosition();
+        float x = Interpolation.smooth.apply(camera.position.x, cameraPosition[0], 0.3f);
+        float y = Interpolation.smooth.apply(camera.position.y, cameraPosition[1], 0.3f);
         camera.position.set(x, y, 0);
 		camera.update();
 	}
+    
+    //为大幅度画面转换使用
     private void updateCamera1() {
-		float min_x = Constants.VISION_WIDTH / 2f;
+        calculateCameraPosition();
+        camera.position.set(cameraPosition[0], cameraPosition[1], 0);
+		camera.update();
+	}
+    
+    private void calculateCameraPosition() {
+    	float min_x = Constants.VISION_WIDTH / 2f;
 		float max_x = MapsManager.mapPixelWidth * scale - min_x;
 		float min_y = 930 / 2f;
 		float max_y = MapsManager.mapPixelHeight * scale - 1050 / 2f;
 		float camera_x = MathUtils.clamp(zhanTingyun.getX(), min_x, max_x);
 		float camera_y = MathUtils.clamp(zhanTingyun.getY(), min_y, max_y);
-        camera.position.set(camera_x, camera_y, 0);
-		camera.update();
-	}
+        cameraPosition[0] = camera_x;
+        cameraPosition[1] = camera_y;
+    }
 	@Override
 	public void resize(int p, int p1) {
 		mainViewport.update(p, p1, true);

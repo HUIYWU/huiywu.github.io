@@ -12,6 +12,7 @@ import com.z.loa.entity.config.BattleActionConfig;
 import com.z.loa.entity.event.battle.EffectFinishEvent;
 import com.z.loa.entity.event.battle.EffectTriggerEvent;
 import com.z.loa.screen.BattleScene;
+import java.util.function.Function;
 
 public class TurnManager {
     private Array<BaseEntity> participants;
@@ -23,13 +24,11 @@ public class TurnManager {
     //private int independentVariable;
     private BaseEntity activeParticipant;
     private boolean waitingForOperation;
-
-    private String mark;
+    private boolean eventRound = false;//特效事件控制，处理单配置多特效引起的多个结束事件
 
     public TurnManager() {}
 
-    public TurnManager(
-            Array<BaseEntity> participants, Array<BaseEntity> players, BattleScene scene) {
+    public TurnManager(Array<BaseEntity> participants, Array<BaseEntity> players, BattleScene scene) {
         this.participants = participants;
         this.players = players;
         this.scene = scene;
@@ -42,57 +41,54 @@ public class TurnManager {
     }
 
     private void registerParticipantListener() {
-        for (BaseEntity participant : participants) {
-            participant.addListener(
-                    new EventListener() {
-                        //防止多个结束事件同时发生;
-                        private boolean round = false;
-                        @Override
-                        public boolean handle(Event event) {
-                            if (event.getTarget() != participant) {
-                                return false;
-                            }
-                            
-                            if (event instanceof EffectFinishEvent) {
-                                if(round) {
-                                	scene.recoverLowerPart();
-                                    scene.clearTwinText();
-                                    scene.enableDialog(true);
-                                    for(BaseEntity aim : actionManager.getAims()) {
-                                    	aim.setBattleState(BaseEntity.BattleState.AWAIT);
-                                    }
-                                    round = false;
-                                    endTurn();
-                                    
-                                }
-                                return true;
-                            } else if (event instanceof EffectTriggerEvent) {
-                                round = true;
-                                scene.preprocess((TextButton)scene.getButtonTable().getChild(0));
-                                Timer.schedule(new Timer.Task() {
-                                    @Override
-                                    public void run() {
-                                        scene.setStateImage();
-                                    }
-                                }, 0.1f);
-                                EffectTriggerEvent trigger_event = (EffectTriggerEvent) event;
-                                BaseEntity target = trigger_event.getTarget(); // target是事件发起对象
-                                BattleActionConfig config = trigger_event.getActionConfig();
-                                Array<BaseEntity> aims = actionManager.getAims(); // aim是选择的对象
-                                effectManager.postEffect(config, target, aims);
-                                if (config.isFlashFollow()) {
-                                    Array<BaseEntity> target_1 = new Array<>();
-                                    target_1.add(target);
-                                    effectManager.postFlash(config, target_1);
-                                } else {
-                                    effectManager.postFlash(config, aims);
-                                }
-                                target.resetEventFire();
-                                return true;
-                            }
-                            return false;
+        EventListener listener = new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event.getTarget() != activeParticipant) {
+                    return false;
+                }
+                
+                if (event instanceof EffectFinishEvent) {
+                    if (eventRound) {
+                    	scene.recoverLowerPart();
+                        scene.clearTwinText();
+                        scene.enableDialog(true);
+                        for (BaseEntity aim : actionManager.getAims()) {
+                        	aim.setBattleState(BaseEntity.BattleState.AWAIT);
                         }
-                    });
+                        eventRound = false;
+                        endTurn();
+                    }
+                    return true;
+                } else if (event instanceof EffectTriggerEvent) {
+                    scene.preprocess((TextButton) scene.getButtonTable().getChild(0));
+                    Timer.schedule(new Timer.Task() {
+                        @Override
+                        public void run() {
+                            scene.setStateImage();
+                        }
+                    }, 0.1f);
+                    EffectTriggerEvent trigger_event = (EffectTriggerEvent) event;
+                    BaseEntity target = trigger_event.getTarget(); // target是事件发起对象
+                    BattleActionConfig config = trigger_event.getActionConfig();
+                    Array<BaseEntity> aims = actionManager.getAims(); // aim是选择的对象
+                    effectManager.postEffect(config, target, aims);
+                    if (config.isFlashFollow()) {
+                        Array<BaseEntity> target_1 = new Array<>();
+                        target_1.add(target);
+                        effectManager.postFlash(config, target_1);
+                    } else {
+                        effectManager.postFlash(config, aims);
+                    }
+                    target.resetEventFire();
+                    eventRound = true;
+                    return true;
+                }
+                return false;
+            }
+        };
+        for (BaseEntity participant : participants) {
+            participant.addListener(listener);
         }
     }
 
@@ -110,20 +106,15 @@ public class TurnManager {
     }
 
     private void startTurn() {
-        mark = "";
         activeParticipant = participants.get(turnIndex);
         if (isPlayer(activeParticipant)) {
             waitingForOperation = true;
-            scene.enablePlayerControl(true, activeParticipant);
-            scene.setStateImage();
-            // 实现与BattleScene的交流
+            scene.enablePlayerControl(activeParticipant);
         } else {
             waitingForOperation = false;
-            scene.enablePlayerControl(false, activeParticipant);
-            scene.setStateImage();
-            // 同上
-            excuteAIOperation(); // ...
+            excuteAIOperation();
         }
+        scene.setStateImage();
     }
 
     private void endTurn() {
@@ -150,28 +141,26 @@ public class TurnManager {
         return false;
     }
 
-    public boolean isWaitingForOperation() {
-        return waitingForOperation;
-    }
-
     private void excuteAIOperation() {
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
                 BattleActionConfig[] configs = BattleActionConfig.obtainConfigs(activeParticipant.getName());
                 BattleActionConfig config = configs[MathUtils.random(0, configs.length - 1)];
-                
                 actionManager.selectAim(config, players);
-                activeParticipant.setBattleState(BaseEntity.BattleState.ATTACK);
-                activeParticipant.setActionConfig(config);
+                scene.enableConfig(activeParticipant, config, BaseEntity.BattleState.SKILL, true);
             }
             
-        }, 0.2f);
+        }, 0.3f);
         //...
     }
 
     public BaseEntity getActiveParticipant() {
         return this.activeParticipant;
+    }
+    
+    public boolean isEventRound() {
+    	return eventRound;
     }
 
     

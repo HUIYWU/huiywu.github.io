@@ -294,7 +294,7 @@ public class BattleActionConfig {
         return this.mpCost;
     }
 
-    public void setMpCost(int mpCost) {
-        this.mpCost = mpCost;
+    public void setMpCost(int cost) {
+        this.mpCost = cost;
     }
 }
